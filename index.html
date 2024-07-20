@@ -174,7 +174,11 @@
                     "fill-extrusion-opacity": 1,
                     "fill-extrusion-height": ["get", "measuredHeight"]
                 },
-                'filter': ['!=', ['get', 'id'], 'bldg_5b99baae-06d4-40e1-8574-c4a3a1e78a32']
+                'filter': [
+                    'all',
+                    ['==', ['get', 'city'], '東京都中野区'],
+                    ['!=', ['get', 'id'], 'bldg_5b99baae-06d4-40e1-8574-c4a3a1e78a32']
+                ]
             });
 
             // Skyレイヤ
