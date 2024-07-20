@@ -1,0 +1,191 @@
+<html>
+
+<head>
+    <title>中野サンプラザ 3次元点群データ（3D Tiles）</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css" rel="stylesheet">
+    <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://unpkg.com/@loaders.gl/3d-tiles@^2.3.0/dist/dist.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        // addProtocolの設定
+        let protocol = new pmtiles.Protocol();
+        maplibregl.addProtocol('pmtiles', (request) => {
+            return new Promise((resolve, reject) => {
+                const callback = (err, data) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve({ data });
+                    }
+                };
+                protocol.tile(request, callback);
+            });
+        });
+
+        // マップの初期化
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'skeleton.json',
+            // style: 'skeleton.json',
+            hash: true,
+            zoom: 17,
+            center: [139.6645316, 35.7076311],
+            pitch: 0,
+            bearing: 0,
+            maxPitch: 85,
+            attributionControl: false,
+        })
+
+        // ズーム・回転
+        map.addControl(new maplibregl.NavigationControl());
+
+        // フルスクリーンモードのオンオフ
+        map.addControl(new maplibregl.FullscreenControl());
+
+        // 現在位置表示
+        map.addControl(new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: false
+            },
+            fitBoundsOptions: { maxZoom: 18 },
+            trackUserLocation: true,
+            showUserLocation: true
+        }));
+
+        // スケール表示
+        map.addControl(new maplibregl.ScaleControl({
+            maxWidth: 200,
+            unit: 'metric'
+        }));
+
+        // Attributionを折りたたみ表示
+        map.addControl(
+            new maplibregl.AttributionControl({
+                compact: true,
+                customAttribution:
+                    '<a href="https://twitter.com/shi__works" target="_blank">X(旧Twitter)</a> | <a href="https://portal-pref-saitama.hub.arcgis.com/apps/00c934894d3c434c893059202145ba3d" target="_blank">埼玉県 道路・河川の３Dマップ</a>',
+            })
+        );
+
+        // 3D地形コントロール表示
+        map.addControl(
+            new maplibregl.TerrainControl({
+                source: 'aist-dem-terrain-rgb',
+                exaggeration: 1 // 標高を強調する倍率
+            })
+        );
+
+        // 環境光を作成
+        const ambientLight = new deck.AmbientLight({
+            color: [255, 255, 255],
+            intensity: 3.0
+        });
+
+        // 平行ライト作成
+        const directionalLight = new deck.DirectionalLight({
+            color: [255, 255, 255],
+            intensity: 9.0,
+            direction: [-3, -9, -1]
+        });
+
+        // ライティングエフェクトを作成
+        const lightingEffect = new deck.LightingEffect({ ambientLight, directionalLight });
+
+        map.on('load', () => {
+            // 標高タイルソース
+            map.addSource("aist-dem-terrain-rgb", {
+                type: 'raster-dem',
+                tiles: ['https://gbank.gsj.jp/seamless/elev/terrainRGB/mixed/{z}/{y}/{x}.png',
+                ],
+                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html" target="_blank">産総研 シームレス標高タイル(統合DEM)</a>',
+                tileSize: 256,
+                maxzoom: 17
+            });
+
+            // 標高タイルセット
+            map.setTerrain({ 'source': 'aist-dem-terrain-rgb', 'exaggeration': 1 });
+
+            // PLATEAU建築物モデル（PMTiles）ソース
+            map.addSource("plateau-pmtiles", {
+                type: "vector",
+                url: "pmtiles://https://shiworks.xsrv.jp/pmtiles-data/plateau/PLATEAU_2022_LOD1.pmtiles",
+                minzoom: 16,
+                maxzoom: 16,
+                attribution: '<a href="https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154">中野区 中野サンプラザ3Dデータ</a>'
+            });
+
+            // PLATEAU建築物モデル（PMTiles）レイヤ
+            map.addLayer({
+                'id': 'plateau-pmtiles',
+                'source': 'plateau-pmtiles',
+                'source-layer': "PLATEAU",
+                "minzoom": 16,
+                "maxzoom": 23,
+                'type': 'fill-extrusion',
+                'paint': {
+                    "fill-extrusion-color": '#FFFFFF',
+                    "fill-extrusion-opacity": 1,
+                    "fill-extrusion-height": ["get", "measuredHeight"]
+                },
+                'filter': ['!=', ['get', 'id'], 'bldg_5b99baae-06d4-40e1-8574-c4a3a1e78a32']
+            });
+
+            // MapboxOverlayを使ったインターリーブ
+            // 中野サンプラザ点群データ
+            const overlay = new deck.MapboxOverlay({
+                interleaved: false,
+                layers: [
+                    new deck.Tile3DLayer({
+                        id: "tile3dlayer",
+                        pointSize: 1,
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside/tileset.json',
+                        loader: Tiles3DLoader,
+                        onTileLoad: d => {
+                            const { content } = d;
+                            content.cartographicOrigin.z -= 0;
+                        }
+                    })
+                ],
+                effects: [
+                    lightingEffect
+                ],
+            });
+
+            map.addControl(overlay);
+
+            // Skyレイヤ
+            map.setSky({
+                "sky-color": "#199EF3",
+                "sky-horizon-blend": 0.7,
+                "horizon-color": "#f0f8ff",
+                "horizon-fog-blend": 0.8,
+                "fog-color": "#2c7fb8",
+                "fog-ground-blend": 0.9,
+                "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 12, 0]
+            });
+
+        })
+    </script>
+</body>
+
+</html>
