@@ -45,13 +45,13 @@
         // マップの初期化
         const map = new maplibregl.Map({
             container: 'map',
+            // style: 'std.json',
             style: 'skeleton.json',
-            // style: 'skeleton.json',
             hash: true,
-            zoom: 17,
-            center: [139.6645316, 35.7076311],
-            pitch: 0,
-            bearing: 0,
+            zoom: 17.59,
+            center: [139.664761, 35.707667],
+            pitch: 69,
+            bearing: 18.6,
             maxPitch: 85,
             attributionControl: false,
         })
@@ -125,6 +125,31 @@
             // 標高タイルセット
             map.setTerrain({ 'source': 'aist-dem-terrain-rgb', 'exaggeration': 1 });
 
+            // MapboxOverlayを使ったインターリーブ
+            // 中野サンプラザ3次元点群データ
+            const overlay = new deck.MapboxOverlay({
+                interleaved: true,
+                layers: [
+                    new deck.Tile3DLayer({
+                        id: "tile3dlayer",
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside/tileset.json',
+                        loader: Tiles3DLoader,
+                        pointSize: 1,
+                        /*
+                        onTileLoad: d => {
+                            const { content } = d;
+                            content.cartographicOrigin.z -= 0;
+                        }
+                        */
+                    })
+                ],
+                effects: [
+                    lightingEffect
+                ]
+            });
+
+            map.addControl(overlay);
+
             // PLATEAU建築物モデル（PMTiles）ソース
             map.addSource("plateau-pmtiles", {
                 type: "vector",
@@ -149,29 +174,6 @@
                 },
                 'filter': ['!=', ['get', 'id'], 'bldg_5b99baae-06d4-40e1-8574-c4a3a1e78a32']
             });
-
-            // MapboxOverlayを使ったインターリーブ
-            // 中野サンプラザ点群データ
-            const overlay = new deck.MapboxOverlay({
-                interleaved: false,
-                layers: [
-                    new deck.Tile3DLayer({
-                        id: "tile3dlayer",
-                        pointSize: 1,
-                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside/tileset.json',
-                        loader: Tiles3DLoader,
-                        onTileLoad: d => {
-                            const { content } = d;
-                            content.cartographicOrigin.z -= 0;
-                        }
-                    })
-                ],
-                effects: [
-                    lightingEffect
-                ],
-            });
-
-            map.addControl(overlay);
 
             // Skyレイヤ
             map.setSky({
