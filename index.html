@@ -87,13 +87,15 @@
             })
         );
 
+        /*
         // 3D地形コントロール表示
         map.addControl(
             new maplibregl.TerrainControl({
-                source: 'aist-dem-terrain-rgb',
+                source: 'gsidem-terrain-rgb',
                 exaggeration: 1 // 標高を強調する倍率
             })
         );
+        */
 
         // 環境光を作成
         const ambientLight = new deck.AmbientLight({
@@ -112,18 +114,20 @@
         const lightingEffect = new deck.LightingEffect({ ambientLight, directionalLight });
 
         map.on('load', () => {
+            /*
             // 標高タイルソース
-            map.addSource("aist-dem-terrain-rgb", {
+            map.addSource("gsidem-terrain-rgb", {
                 type: 'raster-dem',
-                tiles: ['https://gbank.gsj.jp/seamless/elev/terrainRGB/mixed/{z}/{y}/{x}.png',
+                tiles: [
+                    'https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png'
                 ],
-                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html" target="_blank">産総研 シームレス標高タイル(統合DEM)</a>',
-                tileSize: 256,
-                maxzoom: 17
+                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#dem" target="_blank">地理院タイル(標高タイル)</a>',
+                tileSize: 256
             });
 
             // 標高タイルセット
-            map.setTerrain({ 'source': 'aist-dem-terrain-rgb', 'exaggeration': 1 });
+            map.setTerrain({ 'source': 'gsidem-terrain-rgb', 'exaggeration': 1 });
+            */
 
             // MapboxOverlayを使ったインターリーブ
             // 中野サンプラザ3次元点群データ
@@ -135,12 +139,10 @@
                         data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
-                        /*
                         onTileLoad: d => {
                             const { content } = d;
-                            content.cartographicOrigin.z -= 0;
+                            content.cartographicOrigin.z -= 37.2311;
                         }
-                        */
                     })
                 ],
                 effects: [
