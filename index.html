@@ -21,11 +21,52 @@
             bottom: 0;
             width: 100%;
         }
+
+        #panel {
+            padding: 6px 8px;
+            font: 12px/14px Arial, Helvetica, sans-serif;
+            color: navy;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: fit-content;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+
+        .layer {
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .radio-button-container {
+            display: flex;
+            justify-content: start;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div id="panel">
+        <details>
+            <summary class="layer">
+                <strong>レイヤー切り替え</strong>
+            </summary>
+            <fieldset>
+                <div class="radio-button-container">
+                    <div>
+                        <input type="radio" id="pc-01" name="layer" value="pc" checked>
+                        <label for="pc-01">Hovermap点群データ_外観</label><br>
+                        <input type="radio" id="pc-02" name="layer" value="pc">
+                        <label for="pc-01">航空レーザ点群データ_外観</label>
+                    </div>
+                </div>
+            </fieldset>
+        </details>
+    </div>
     <script type="text/javascript">
         // addProtocolの設定
         let protocol = new pmtiles.Protocol();
@@ -113,6 +154,9 @@
         // ライティングエフェクトを作成
         const lightingEffect = new deck.LightingEffect({ ambientLight, directionalLight });
 
+        // グローバル変数として宣言
+        let currentOverlay = null;
+
         map.on('load', () => {
             /*
             // 標高タイルソース
@@ -129,15 +173,15 @@
             map.setTerrain({ 'source': 'gsidem-terrain-rgb', 'exaggeration': 1 });
             */
 
+            /*
             // MapboxOverlayを使ったインターリーブ
             // 中野サンプラザ3次元点群データ（Hovermap点群データ_外観）
-            const overlay = new deck.MapboxOverlay({
+            overlay1 = new deck.MapboxOverlay({
                 interleaved: true,
                 layers: [
                     new deck.Tile3DLayer({
-                        id: "tile3dlayer",
+                        id: "tile3dlayer-hovermap",
                         data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
-                        // data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
                         onTileLoad: d => {
@@ -151,13 +195,39 @@
                 ]
             });
 
-            map.addControl(overlay);
+            // 初期レイヤーの設定
+            map.addControl(overlay1);
+
+            // MapboxOverlayを使ったインターリーブ
+            // 中野サンプラザ3次元点群データ（航空レーザ点群データ_外観）
+            overlay2 = new deck.MapboxOverlay({
+                interleaved: true,
+                layers: [
+                    new deck.Tile3DLayer({
+                        id: "tile3dlayer-airborne",
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
+                        loader: Tiles3DLoader,
+                        pointSize: 1,
+                        onTileLoad: d => {
+                            const { content } = d;
+                            content.cartographicOrigin.z -= 38.5;
+                        }
+                    })
+                ],
+                effects: [
+                    lightingEffect
+                ]
+            });
+            */
+
+            // 初期オーバーレイの設定
+            addOverlay1();
 
             // PLATEAU建築物モデル（PMTiles）ソース
             map.addSource("plateau-pmtiles", {
                 type: "vector",
-                // url: "pmtiles://https://shiworks.xsrv.jp/pmtiles-data/plateau/PLATEAU_2022_LOD1.pmtiles",
-                url: "pmtiles://https://pmtiles-data.s3.ap-northeast-1.amazonaws.com/plateau/PLATEAU_2022_LOD1.pmtiles",
+                url: "pmtiles://https://shiworks.xsrv.jp/pmtiles-data/plateau/PLATEAU_2022_LOD1.pmtiles",
+                // url: "pmtiles://https://pmtiles-data.s3.ap-northeast-1.amazonaws.com/plateau/PLATEAU_2022_LOD1.pmtiles",
                 minzoom: 16,
                 maxzoom: 16,
                 attribution: '<a href="https://www.geospatial.jp/ckan/dataset/plateau">3D都市モデルPLATEAU建築物モデルLOD1（国土交通省）</a>'
@@ -195,6 +265,100 @@
             });
 
         })
+
+        /*
+        // ラジオボタンの状態に応じてレイヤーの表示・非表示を切り替える
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const radioButtons = document.querySelectorAll('input[name="layer"]');
+            radioButtons.forEach(radioButton => {
+                radioButton.addEventListener('change', function () {
+                    if (this.checked) {
+                        // 既存のオーバーレイを削除
+                        if (this.id === 'pc-01') {
+                            map.removeControl(overlay2);
+                            map.addControl(overlay1);
+                        } else if (this.id === 'pc-02') {
+                            map.removeControl(overlay1);
+                            map.addControl(overlay2);
+                        }
+                    }
+                });
+            });
+        });
+        */
+
+        // レイヤー1の追加関数
+        function addOverlay1() {
+            if (currentOverlay) {
+                map.removeControl(currentOverlay);
+            }
+
+            currentOverlay = new deck.MapboxOverlay({
+                interleaved: true,
+                layers: [
+                    new deck.Tile3DLayer({
+                        id: "tile3dlayer-hovermap",
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
+                        loader: Tiles3DLoader,
+                        pointSize: 1,
+                        onTileLoad: d => {
+                            const { content } = d;
+                            content.cartographicOrigin.z -= 38.5;
+                        }
+                    })
+                ],
+                effects: [
+                    lightingEffect
+                ]
+            });
+
+            map.addControl(currentOverlay);
+        }
+
+        // レイヤー2の追加関数
+        function addOverlay2() {
+            if (currentOverlay) {
+                map.removeControl(currentOverlay);
+            }
+
+            currentOverlay = new deck.MapboxOverlay({
+                interleaved: true,
+                layers: [
+                    new deck.Tile3DLayer({
+                        id: "tile3dlayer-airborne",
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
+                        loader: Tiles3DLoader,
+                        pointSize: 1,
+                        onTileLoad: d => {
+                            const { content } = d;
+                            content.cartographicOrigin.z -= 38.5;
+                        }
+                    })
+                ],
+                effects: [
+                    lightingEffect
+                ]
+            });
+
+            map.addControl(currentOverlay);
+        }
+
+        // ラジオボタンの状態に応じてレイヤーの表示・非表示を切り替える
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const radioButtons = document.querySelectorAll('input[name="layer"]');
+            radioButtons.forEach(radioButton => {
+                radioButton.addEventListener('change', function () {
+                    if (this.checked) {
+                        if (this.id === 'pc-01') {
+                            addOverlay1();
+                        } else if (this.id === 'pc-02') {
+                            addOverlay2();
+                        }
+                    }
+                });
+            });
+        });
+
     </script>
 </body>
 
