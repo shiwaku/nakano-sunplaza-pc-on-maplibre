@@ -130,13 +130,14 @@
             */
 
             // MapboxOverlayを使ったインターリーブ
-            // 中野サンプラザ3次元点群データ
+            // 中野サンプラザ3次元点群データ（Hovermap点群データ_外観）
             const overlay = new deck.MapboxOverlay({
                 interleaved: true,
                 layers: [
                     new deck.Tile3DLayer({
                         id: "tile3dlayer",
-                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside/tileset.json',
+                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
+                        // data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
                         onTileLoad: d => {
