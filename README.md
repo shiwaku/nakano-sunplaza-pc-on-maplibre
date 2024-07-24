@@ -17,7 +17,7 @@ https://www.geospatial.jp/ckan/dataset/plateau
 - 国土地理院 最適化ベクトルタイル
 https://github.com/gsi-cyberjapan/optimal_bvmap
 
-# データの加工方法
+# 3次元点群データの加工方法
 - [PDAL](https://pdal.io/en/2.7.2/)及び[py3dtiles](https://pypi.org/project/py3dtiles/)を用いて、3次元点群データ（LAS）から3D Tilesを生成しています。
 
 ## LASのX座標とY座標を入れ替え（平面直角座標系から地心直交座標系に変更）
