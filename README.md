@@ -9,6 +9,9 @@ https://www.city.tokyo-nakano.lg.jp/kanko/city-promotion/Sunplaza_3D.html
 https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154
 - 東京都オープンデータカタログサイトで公開されている中野サンプラザ3Dデータのうち、「中野サンプラザ三次元点群データ（外観）」を使用しています。  
 
+## 3D都市モデル（Project PLATEAU）ポータルサイト
+- 3D都市モデル（Project PLATEAU）建築物モデル（LOD1）
+
 # データの加工方法
 - [PDAL](https://pdal.io/en/2.7.2/)及び[py3dtiles](https://pypi.org/project/py3dtiles/)を用いて、3次元点群データ（LAS）から3D Tilesを生成しています。
 
