@@ -14,7 +14,7 @@ https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154
 https://www.geospatial.jp/ckan/dataset/plateau
 
 ## 背景地図
-- 国土地理院 最適化ベクトルタイル
+- 国土地理院 最適化ベクトルタイル  
 https://github.com/gsi-cyberjapan/optimal_bvmap
 
 # 3次元点群データの加工方法
