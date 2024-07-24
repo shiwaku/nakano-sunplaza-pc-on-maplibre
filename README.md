@@ -53,3 +53,6 @@ pdal pipeline xy_switch_pipeline.json
 ```
 py3dtiles convert --srs_in 6677 --srs_out 4978 --out outside-2 航空レーザ点群データ_外観_swaped.las
 ```
+
+# 3次元点群データ（3D Tiles）の表示方法
+- 
