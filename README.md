@@ -12,8 +12,8 @@ https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154
 # データの加工方法
 - [PDAL](https://pdal.io/en/2.7.2/)及び[py3dtiles](https://pypi.org/project/py3dtiles/)を用いて、点群データから3D Tilesを生成しています。
 - LASのX座標とY座標を入れ替え（平面直角座標系から地心直交座標系に変更）
-xy_switch_pipeline.json
-```json:xy_switch_pipeline.json
+# xy_switch_pipeline.json
+```json
 [
   {
     "type": "readers.las",
