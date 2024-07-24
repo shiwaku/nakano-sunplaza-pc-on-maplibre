@@ -40,3 +40,7 @@ https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154
 # X座標とY座標を入れ替え
 pdal pipeline xy_switch_pipeline.json
 ```
+## 3D Tilesの生成
+```
+py3dtiles convert --srs_in 6677 --srs_out 4978 --out outside-2 航空レーザ点群データ_外観_swaped.las
+```
