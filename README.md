@@ -12,6 +12,10 @@ https://catalog.data.metro.tokyo.lg.jp/dataset/t131148d0000000154
 ## 3D都市モデル（Project PLATEAU）建築物モデル（LOD1）
 https://www.geospatial.jp/ckan/dataset/plateau
 
+## 背景地図
+- 国土地理院 最適化ベクトルタイル
+https://github.com/gsi-cyberjapan/optimal_bvmap
+
 # データの加工方法
 - [PDAL](https://pdal.io/en/2.7.2/)及び[py3dtiles](https://pypi.org/project/py3dtiles/)を用いて、3次元点群データ（LAS）から3D Tilesを生成しています。
 
