@@ -1,4 +1,4 @@
-# データの出典
+# 点群データの出典
 ## 中野サンプラザ3次元点群データ
 ### 中野サンプラザ 3Dデータ
 https://www.city.tokyo-nakano.lg.jp/kanko/city-promotion/Sunplaza_3D.html
