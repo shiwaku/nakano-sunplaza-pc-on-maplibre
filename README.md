@@ -53,3 +53,8 @@ pdal pipeline xy_switch_pipeline.json
 ```
 py3dtiles convert --srs_in 6677 --srs_out 4978 --out outside-2 航空レーザ点群データ_外観_swaped.las
 ```
+
+# 本成果の掲載先
+- 東京都中野区ホームページ | 中野サンプラザ3Dデータを公開します！
+https://www.city.tokyo-nakano.lg.jp/kanko/city-promotion/Sunplaza_3D.html
+<img width="1126" height="306" alt="image" src="https://github.com/user-attachments/assets/286c6193-1654-48a6-9a11-ddd1f157218a" />
