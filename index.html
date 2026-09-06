@@ -163,7 +163,7 @@
             map.addSource("gsidem-terrain-rgb", {
                 type: 'raster-dem',
                 tiles: [
-                    'https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png'
+                    'https://shi-works.com/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png'
                 ],
                 attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#dem" target="_blank">地理院タイル(標高タイル)</a>',
                 tileSize: 256
@@ -181,7 +181,7 @@
                 layers: [
                     new deck.Tile3DLayer({
                         id: "tile3dlayer-hovermap",
-                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
+                        data: 'https://shi-works.com/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
                         onTileLoad: d => {
@@ -205,7 +205,7 @@
                 layers: [
                     new deck.Tile3DLayer({
                         id: "tile3dlayer-airborne",
-                        data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
+                        data: 'https://shi-works.com/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
                         onTileLoad: d => {
@@ -226,7 +226,7 @@
             // PLATEAU建築物モデル（PMTiles）ソース
             map.addSource("plateau-pmtiles", {
                 type: "vector",
-                // url: "pmtiles://https://shiworks.xsrv.jp/pmtiles-data/plateau/PLATEAU_2022_LOD1.pmtiles",
+                // url: "pmtiles://https://shi-works.com/pmtiles/plateau/PLATEAU_2022_LOD1.pmtiles",
                 // url: "pmtiles://https://pmtiles-data.s3.ap-northeast-1.amazonaws.com/plateau/PLATEAU_2022_LOD1.pmtiles",
                 url: "pmtiles://https://public-data.geolonia.com/mlit-plateau/PLATEAU_2022_LOD1.pmtiles",
                 minzoom: 16,
@@ -299,7 +299,7 @@
                 layers: [
                     new deck.Tile3DLayer({
                         id: "tile3dlayer-hovermap",
-                        // data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
+                        // data: 'https://shi-works.com/3dtiles/nakano-sunplaza-pc/outside-1/tileset.json',
                         data: 'https://public-data.geolonia.com/nakano-sunplaza-pc/outside-1/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
@@ -328,7 +328,7 @@
                 layers: [
                     new deck.Tile3DLayer({
                         id: "tile3dlayer-airborne",
-                        // data: 'https://shiworks.xsrv.jp/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
+                        // data: 'https://shi-works.com/3dtiles/nakano-sunplaza-pc/outside-2/tileset.json',
                         data: 'https://public-data.geolonia.com/nakano-sunplaza-pc/outside-2/tileset.json',
                         loader: Tiles3DLoader,
                         pointSize: 1,
